@@ -25,8 +25,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-_q9&b%395)=(pebed(8ci
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
-ALLOWED_HOSTS = []
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS.append("eventcalendar.herokuapp.com")
 
 
 # Application definition
