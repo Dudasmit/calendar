@@ -11,14 +11,16 @@ Calendar
   		<form  action="{% url 'logout' %}" method="post">
     	{% csrf_token %}
     	<button  class="btn btn-info right" type="submit">Log Out</button>
+		<a class="btn btn-info left" href="{% url 'core:calendar' %}?{{ prev_month }}"> Previous Month </a>
+		<a class="btn btn-info right" href="{% url 'core:calendar' %}?{{ next_month }}"> Next Month </a>
+		<a class="btn btn-info right" href="{% url 'core:event_new' %}"> New Event </a>
+	
     	</form>
     {% else %}
     	<p>Please login to see this page.</p>
     {% endif %}
 	
-	<a class="btn btn-info left" href="{% url 'core:calendar' %}?{{ prev_month }}"> Previous Month </a>
-	<a class="btn btn-info right" href="{% url 'core:calendar' %}?{{ next_month }}"> Next Month </a>
-	<a class="btn btn-info right" href="{% url 'core:event_new' %}"> New Event </a>
+	
 
 	
 
