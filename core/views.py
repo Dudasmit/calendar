@@ -311,7 +311,8 @@ def generate_pdf(request, day = None, month = None, year = None, date = None):
     # Need a place to store our table rows
     table_data = []
     table_data.append(['','DATUM','','DAG','','LOCATIE','','',''])
-    table_data.append(['',str(year) +' '+ str(users[0].start_time.strftime('%B')) +' ' + str(day),'',users[0].start_time.strftime('%A'),'','',''])
+    table_data.append(['',str(year) +' '+ str(datetime(day, month, year).strftime('%B')) +' ' + str(day),'',datetime(day, month, year).strftime('%A'),'','',''])
+    #table_data.append(['',str(year) +' '+ str(users[0].start_time.strftime('%B')) +' ' + str(day),'',users[0].start_time.strftime('%A'),'','',''])
   
         
     #print(len(users))   
@@ -325,11 +326,12 @@ def generate_pdf(request, day = None, month = None, year = None, date = None):
     left_event = len_event
     
     print(f'len - {len_event}')
+    emty_block = (count_bloks*2) - len_event
     
     i = 0
-    for it in range(count_bloks):
+    for it in range(len_event):
         if left_event == 0:
-            add_empty_event_to_table(table_data,i)
+            #add_empty_event_to_table(table_data,i)
             continue
             
         
@@ -344,10 +346,17 @@ def generate_pdf(request, day = None, month = None, year = None, date = None):
        
         
         i = i + 2
-        print(f'count {i}')
-        print(f'left len - {left_event}')
+        #print(f'count {i}')
+        #print(f'left len - {left_event}')
             
-                      
+    if emty_block%2 != 0:
+        emty_block = (emty_block-1)
+        
+    emty_block = int(emty_block/2)
+    #print(emty_block)
+    for it in range(emty_block): 
+        add_empty_event_to_table(table_data,i)
+        i = i + 2  
         
         
         
