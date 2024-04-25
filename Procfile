@@ -1,1 +1,1 @@
-web: gunicorn sepautoservice.wsgi
+web: gunicorn eventcalendar.wsgi
