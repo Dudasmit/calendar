@@ -2,22 +2,45 @@
 
 
 {% block content %}
+<div class="clearfix">
+<aside class="app-sidebar">
+	<form action ="{% url  'core:filterdaywinkel'  %}{{today}}/{{month}}/{{year}}/" method = "get">  
+	   
+		{% for winkel in winkels %}
+			<div class="clearfix">
+				<a class="treeview-item" href="{% url  'core:filterdaywinkel' %}{{today}}/{{month}}/{{year}}/?winkel={{ winkel.pk }}">
+					<input   type="checkbox" class = "checked" name = "winkel" value="{{winkel.pk}}">
+					
+				<span  class="form-check-label" >{{ winkel.name }}</span></a>
 
+				
+
+				
+			</div>
+			
+		{%endfor%}
+		<button type="submit" class="btn btn-info left"> Find </button>
+		<button type="submit" class="btn btn-info left"><a class="treeview-item" href="{% url  'core:filterdaywinkel' %}{{today}}/{{month}}/{{year}}/">Filter wissen</a> </button>
+		
+	</form>
+  </aside>
+</div>
 <div class="clearfix">
   <a class="btn btn-info left" href="{% url 'core:calendar' %}"> Calendar </a>
-	<a class="btn btn-info left" href="{{ prev_day }}"> Previous day </a>
-	<a class="btn btn-info right" href="{{ next_day }}"> Next day </a>
-	<a class="btn btn-info right" href="{% url 'core:event_new' %}"> New Event </a>
-  <a target="_blank" class="btn btn-info left" href="{{print}}" >Print PDF</a> 
+	<a class="btn btn-info left" href="{{ prev_day }}"> Vorige dag </a>
+	<a class="btn btn-info right" href="{{ next_day }}"> Volgende dag </a>
+	<a class="btn btn-info right" href="{% url 'core:event_new' %}"> Nieuw evenement </a>
+  	<a target="_blank" class="btn btn-info left" href="{{print}}" >PDF afdrukken</a> 
 
 </div>
 <div id="sidebar">
 
 </div>
-<div id="main" class="product-list">
+<div class="a4-container">
 
-<table border="0" cellpadding="0" cellspacing="0" class="calendar">
-
+<table class="table">
+	{{ day }}
 </div>
-{{ day }}
+
 {% endblock %}
+

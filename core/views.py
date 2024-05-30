@@ -12,24 +12,26 @@ from django.shortcuts import redirect
 import calendar
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from .utils import Calendar,Day
 from .forms import EventForm, DayForm
-
+from django.db.models import Q
 
 from io import BytesIO
-from reportlab.lib.enums import TA_RIGHT
+from reportlab.lib.enums import TA_RIGHT,TA_CENTER 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from django.conf import settings
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
-from reportlab.platypus import Paragraph, Spacer, Frame, Table, TableStyle, SimpleDocTemplate
-from reportlab.lib.pagesizes import letter, landscape, A4
+from reportlab.platypus import Table,Paragraph, TableStyle, SimpleDocTemplate
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+import math
+
 
 pdfmetrics.registerFont(TTFont('Arial', settings.STATIC_ROOT + '/fonts/arial.ttf'))
 pdfmetrics.registerFont(TTFont('Arial-Bold', settings.STATIC_ROOT + '/fonts/arialbd.ttf'))
@@ -37,6 +39,22 @@ pdfmetrics.registerFont(TTFont('Arial-Bold', settings.STATIC_ROOT + '/fonts/aria
 
 def index(request):
     return HttpResponse('hello')
+
+
+class WinkelType:
+    
+    def get_winkel(self):
+        return  Winkel.objects.all()
+    
+    def get_type_event(self):
+        return  TypeEvent.objects.all()
+
+def get_date(req_day):
+    if req_day:
+        year, month = (int(x) for x in req_day.split("-"))
+        return date(year, month, day=1)
+    return datetime.today()
+
 
 
 def user_login(request):
@@ -59,11 +77,16 @@ def user_login(request):
 
 def logout_view(request):
     logout(request)
+    
+    
 
-class CalendarView(generic.ListView):
+
+class CalendarView(WinkelType,LoginRequiredMixin, generic.ListView):
     
     model = Apointments
     template_name = 'core/calendar.html'
+    
+    
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated == True:
             # Try to dispatch to the right method; if a method doesn't exist,
@@ -84,15 +107,74 @@ class CalendarView(generic.ListView):
         d = get_date(self.request.GET.get('month', None))
 
         # Instantiate our calendar class with today's year and date
-        cal = Calendar(d.year, d.month)
+        #print(self.request.GET.getlist("typeevent"))
+        cal = Calendar(d.year, d.month,self.request.GET.getlist("typeevent") ,self.request.GET.getlist("winkel") )
 
         # Call the formatmonth method, which returns our calendar as a table
+        winkels = WinkelType.get_winkel(self)
+        
         html_cal = cal.formatmonth(withyear=True)
         context['calendar'] = mark_safe(html_cal)
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
+        context['winkels'] =  winkels
+        
+        #context['typeevents'] = WinkelType.get_type_event(self)
         
         return context
+
+class FilterWinkel(CalendarView,generic.ListView):
+    #login_url = "accounts:signin"
+    template_name = "core/calendar.html"
+    
+
+    def get_queryset(self):
+       
+        
+        queryset = Apointments.objects.filter(
+             Q(winkel__in=self.request.GET.getlist("winkel"))
+            )   
+                            
+        return queryset
+    
+
+    
+def filterwinkel(request, winkel=None):
+    #login_url = "accounts:signin"
+   
+
+    
+    apointments = Apointments.objects.filter(
+              Q(typeevent__in = winkel)
+            )   
+                            
+    return render(request, CalendarView())
+    
+    
+class СhooseTypeEvent(generic.ListView):
+    login_url = "accounts:signin"
+    template_name = "core/typeevent.html"
+    model = TypeEvent
+    #typeevents = TypeEvent.objects.all()
+    
+    
+
+    
+    def get_context_data(self, **kwargs):
+        
+       
+       
+        context = super().get_context_data(**kwargs)
+        # use today's date for the calendar
+        
+
+        # Call the formatmonth method, which returns our calendar as a table
+       
+        context['typeevents'] = WinkelType.get_type_event(self)
+        
+        
+        return context
+
 
 def get_date(req_day):
     if req_day:
@@ -106,13 +188,13 @@ def prev_day(d):
     first = d
     prev_day = first - timedelta(days=1)
 
-    day_ = '/day/edit/' + str(prev_day.day) + '/' +  str(prev_day.month) + '/' + str(prev_day.year)
+    day_ = '/calendar/day/edit/' + str(prev_day.day) + '/' +  str(prev_day.month) + '/' + str(prev_day.year)
     return day_
 
 def next_day(d):
     last = d
     next_day = last + timedelta(days=1)
-    day_ = '/day/edit/' + str(next_day.day) + '/' +  str(next_day.month) + '/' + str(next_day.year)
+    day_ = '/calendar/day/edit/' + str(next_day.day) + '/' +  str(next_day.month) + '/' + str(next_day.year)
     return day_
 
 
@@ -143,6 +225,10 @@ def event(request, event_id=None):
     else:
         instance = Apointments()
         instance.user = request.user
+        #print(Winkel.objects.filter(winkel__in=request.GET.getlist("winkel")))
+        #instance.winkel = get_object_or_404(Winkel, id=request.GET.getlist("winkel")) 
+        #instance.typeevent =  get_object_or_404(TypeEvent, id=request.GET.getlist("typeevent")) 
+        
     
     
     form = EventForm(request.POST or None, instance=instance)
@@ -222,11 +308,12 @@ class DayView(generic.ListView):
     def get_context_data(self, **kwargs):
        
         context = super().get_context_data(**kwargs)
+        #print('DayView',self.request.GET.getlist("typeevent") ,self.request.GET.getlist("winkel") )
         # use today's date for the calendar
         d = datetime(self.kwargs['year'], self.kwargs['month'], self.kwargs['day'])
 
         # Instantiate our calendar class with today's year and date
-        cal = Day(self.kwargs['day'],self.kwargs['year'], self.kwargs['month'], date =d)
+        cal = Day(self.kwargs['day'],self.kwargs['year'], self.kwargs['month'],self.request.GET.getlist("typeevent") ,self.request.GET.getlist("winkel") , date =d)
         
 
         # Call the formatmonth method, which returns our calendar as a table
@@ -235,31 +322,50 @@ class DayView(generic.ListView):
         context['day'] = mark_safe(html_cal)
         context['prev_day'] = prev_day(d)
         context['next_day'] = next_day(d)
+        context['winkels'] =  WinkelType.get_winkel(self)
+        context['today'] = self.kwargs['day']
+        context['month'] = self.kwargs['month']
+        context['year'] = self.kwargs['year']
+
         
-        context['print'] = Apointments.get_print_pdf_url(Apointments, self.kwargs['year'], self.kwargs['month'], self.kwargs['day'])
+        
+        context['print'] = Apointments.get_print_pdf_url(Apointments, self.kwargs['year'], self.kwargs['month'], self.kwargs['day'], self.request.GET.getlist("winkel") )
         
         
         return context
 
+class FilterDayView(DayView,generic.ListView):
+    #login_url = "accounts:signin"
+    #template_name = "core/day.html"
+    #print("FilterDayView")
+    
 
+    def get_queryset(self):
+        
+        queryset = Apointments.objects.filter(
+             Q(winkel__in=self.request.GET.getlist("winkel")) 
+            )   
+                            
+        return queryset
+    
 def add_single_event_to_table(table_data,users,i):
     
-    table_data.append(['TIJD',str(users[i].start_time.hour) + ':' + str(users[i].start_time.minute),'','',i+1,'','','',i+2])
+    table_data.append(['TIJD',users[i].start_time.strftime("%H:%M"),'','',i+1,'','','',i+2])
     table_data.append(['PLAATS',users[i].sity,'','','','','',''])
     table_data.append(['POSTC. NR.',users[i].postcode,'','','','','',''])
     table_data.append(['NAAM',users[i].client,'','','','','',''])
-    table_data.append(['OPDERNR',users[i].pk,'','','','','',''])
+    table_data.append(['OPDERNR',users[i].ordernr,'','','','','',''])
     table_data.append(['PRIJS IN €',users[i].price,'','','','','',''])
     table_data.append(['TELEFOON',users[i].telefon,'','','','','',''])
     table_data.append(['WINKEL',users[i].winkel,'','','','','',''])
 
 def add_event_to_table(table_data,users,i):
     
-    table_data.append(['TIJD',str(users[i].start_time.hour) + ':' + str(users[i].start_time.minute),'','',i+1,str(users[i+1].start_time.hour) + ':' + str(users[i+1].start_time.minute),'','',i+2])
+    table_data.append(['TIJD',users[i].start_time.strftime("%H:%M"),'','',i+1,users[i+1].start_time.strftime("%H:%M"),'','',i+2])
     table_data.append(['PLAATS',users[i].sity,'','','',users[i+1].sity,'',''])
     table_data.append(['POSTC. NR.',users[i].postcode,'','','',users[i+1].postcode,'',''])
     table_data.append(['NAAM',users[i].client,'','','',users[i+1].client,'',''])
-    table_data.append(['OPDERNR',users[i].pk,'','','',users[i+1].pk,'',''])
+    table_data.append(['OPDERNR',users[i].ordernr,'','','',users[i+1].ordernr,'',''])
     table_data.append(['PRIJS IN €',users[i].price,'','','',users[i+1].price,'',''])
     table_data.append(['TELEFOON',users[i].telefon,'','','',users[i+1].telefon,'',''])
     table_data.append(['WINKEL',users[i].winkel,'','','',users[i+1].winkel,'',''])
@@ -275,119 +381,8 @@ def add_empty_event_to_table(table_data,i):
     table_data.append(['TELEFOON','','','','','','',''])
     table_data.append(['WINKEL','','','','','','',''])
 
-
-def generate_pdf(request, day = None, month = None, year = None, date = None):
-    if request.user.is_authenticated == False:
-        return redirect("http://localhost:8000/")
-
-    # Create the HttpResponse object with the appropriate PDF headers.
-    response = HttpResponse(content_type='application/pdf')
-    d = datetime.today().strftime('%Y-%m-%d')
-    
-    #response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
-    response['Content-Disposition'] = f'inline; filename="{d}.pdf"'
-
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer,
-                                rightMargin=20,
-                                leftMargin=20,
-                                topMargin=10,
-                                bottomMargin=5, pagesize=A4)
-    #doc.pagesize = landscape(A4)
-    # Our container for 'Flowable' objects
-    elements = []
-    # A large collection of style sheets pre-made for us
-    styles = getSampleStyleSheet()
-    
-    styles.wordWrap = 'CJK' 
-    styles.add(ParagraphStyle(name='RightAlign', fontName='Arial', alignment=TA_RIGHT))
-
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
-    
-    users = Apointments.objects.filter(start_time__day=year, start_time__month=month, start_time__year=day)
-    #elements.append(Paragraph('My User Names', styles['RightAlign']))
-
-    # Need a place to store our table rows
-    table_data = []
-    table_data.append(['','DATUM','','DAG','','LOCATIE','','',''])
-    table_data.append(['',str(year) +' '+ str(datetime(day, month, year).strftime('%B')) +' ' + str(day),'',datetime(day, month, year).strftime('%A'),'','',''])
-    #table_data.append(['',str(year) +' '+ str(users[0].start_time.strftime('%B')) +' ' + str(day),'',users[0].start_time.strftime('%A'),'','',''])
-  
-        
-    #print(len(users))   
-    list_name = ['TIJD', 'PLAATS','POSTC. NR.', 'NAAM', 'OPDERNR', 'PRIJS IN €', 'TELEFOON', 'WINKEL']
-    dict_name = {'TIJD':'start_time', 'PLAATS':'sity','POSTC. NR.':'postcode', 'NAAM':'client', 'OPDERNR':'pk', 'PRIJS IN €':'price', 'TELEFOON':'telefon', 'WINKEL':'winkel'}
-    
-
-    count_bloks = 5
-    len_event = len(users)
-    
-    left_event = len_event
-    
-    print(f'len - {len_event}')
-    emty_block = (count_bloks*2) - len_event
-    
-    i = 0
-    for it in range(len_event):
-        if left_event == 0:
-            #add_empty_event_to_table(table_data,i)
-            continue
-            
-        
-        if left_event - 2 >= 0:
-            add_event_to_table(table_data,users,i)
-            left_event = left_event - 2
-            
-            
-        else:
-            add_single_event_to_table(table_data,users,i)
-            left_event = left_event - 1
-       
-        
-        i = i + 2
-        #print(f'count {i}')
-        #print(f'left len - {left_event}')
-            
-    if emty_block%2 != 0:
-        emty_block = (emty_block-1)
-        
-    emty_block = int(emty_block/2)
-    #print(emty_block)
-    for it in range(emty_block): 
-        add_empty_event_to_table(table_data,i)
-        i = i + 2  
-        
-        
-        
-    table_data.append(['CHAUFFEUR','','BIJRIJDER','', 'KENTEKEN','','NOTTITIE',''])
-    table_data.append(['','', '','',''])
-    table_data.append(['PIN','CONTACT', 'ONTERN','TOTALE\nINKOMSTEN','TANK\nKOSTEN','BEGINTIJD','EINDTIJD','TOTAL\nUREN','RESTANT'])
-    table_data.append(['','', '','','','','','',''])  
-    '''
-    for i, user in enumerate(users):
-        # Add a row to the table
-        table_data.append([str(user.winkel)
-                            +'\n'+ str(user.start_time) 
-                            +'\n'+ str(user.sity)
-                            +'\n'+ str(user.postcode)
-                            +'\n'+ str(user.client)
-                            +'\n'+ str(user.start_time)
-                            +'\n'+ str(user.start_time)
-                            +'\n'+ str(user.telefon)])
-    '''
-    SPAN_table = [('SPAN',(0,0),(0,1))]
-    for i in range(len(list_name)):
-        SPAN_table.append(('SPAN',(1,i+4),(4,i+4)))
-        SPAN_table.append(('SPAN',(5,i+4),(8,i+4)))
-    
-   
-    # Create the table
-    height = [doc.height/50.0]*44
-    height.append(30.537795275590554)
-    height.append(16.537795275590554)
-    
-    user_table = Table(table_data, colWidths=[doc.width/10.0]*10, rowHeights=height, style=[('SPAN',(0,0),(0,1)),
+def stylepdf():
+    return [('SPAN',(0,0),(0,1)),
                                                           
                                                           
                                                           ('SPAN',(5,0),(8,0)),
@@ -417,6 +412,7 @@ def generate_pdf(request, day = None, month = None, year = None, date = None):
                                                           ('SPAN',(1,6),(4,6)),
                                                           ('SPAN',(1,7),(4,7)),
                                                           ('SPAN',(1,8),(4,8)),
+                                                          
                                                           ('SPAN',(1,9),(4,9)),
                                                           
                                                           ('SPAN',(8,2),(8,3)),
@@ -555,11 +551,123 @@ def generate_pdf(request, day = None, month = None, year = None, date = None):
                                                           ('SPAN',(4,42),(5,42)),
                                                           ('SPAN',(4,43),(5,43)),
                                                           
+                                                          
                                                           ('SPAN',(6,42),(6,43)),
                                                           ('SPAN',(7,42),(8,43)),
-                                                          
+                                                          #prise color
                                                                                                               
-                                                          ])
+                                                          ]
+
+def get_pdf_page_by_10_events(doc,users,  buffer,day, month, year):
+    
+    # A large collection of style sheets pre-made for us
+    styles = getSampleStyleSheet()
+    
+    styles.wordWrap = 'CJK' 
+    styles.add(ParagraphStyle(name='RightAlign', fontName='Arial', alignment=TA_RIGHT))
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    #Q(winkel__in=request.GET.getlist("winkel"))
+    
+
+    #elements.append(Paragraph('My User Names', styles['RightAlign']))
+
+    # Need a place to store our table rows
+    table_data = []
+    table_data.append(['','DATUM','','DAG','','LOCATIE','','',''])
+    table_data.append(['',str(year) +' '+ str(datetime(day, month, year).strftime('%B')) +' ' + str(day),'',datetime(day, month, year).strftime('%A'),'','',''])
+    #table_data.append(['',str(year) +' '+ str(users[0].start_time.strftime('%B')) +' ' + str(day),'',users[0].start_time.strftime('%A'),'','',''])
+  
+        
+    #print(len(users))   
+    list_name = ['TIJD', 'PLAATS','POSTC. NR.', 'NAAM', 'OPDERNR', 'PRIJS IN €', 'TELEFOON', 'WINKEL']
+    dict_name = {'TIJD':'start_time', 'PLAATS':'sity','POSTC. NR.':'postcode', 'NAAM':'client', 'OPDERNR':'pk', 'PRIJS IN €':'price', 'TELEFOON':'telefon', 'WINKEL':'winkel'}
+    
+
+    count_bloks = 5
+    len_event = len(users)
+    
+    left_event = len_event
+    style = stylepdf()
+    
+    #print(f'len - {len_event}')
+    emty_block = (count_bloks*2) - len_event
+    
+    i = 0
+    color_step = 7
+    for it in range(len_event):
+        if left_event == 0:
+            #add_empty_event_to_table(table_data,i)
+            continue
+            
+        
+        if left_event - 2 >= 0:
+            add_event_to_table(table_data,users,i)
+            if users[i].intern:
+                style.append(('BACKGROUND',(1,color_step),(4,color_step),colors.red))
+            if users[i+1].intern:
+                style.append(('BACKGROUND',(5,color_step),(8,color_step),colors.red))
+            left_event = left_event - 2
+            color_step += 8
+            
+            
+        else:
+            add_single_event_to_table(table_data,users,i)
+            if users[i].intern:
+                style.append(('BACKGROUND',(1,color_step),(4,color_step),colors.red))
+            left_event = left_event - 1
+       
+        
+        i = i + 2
+        #print(f'count {i}')
+        #print(f'left len - {left_event}')
+            
+    if emty_block%2 != 0:
+        emty_block = (emty_block-1)
+        
+    emty_block = int(emty_block/2)
+    #print(emty_block)
+    for it in range(emty_block): 
+        add_empty_event_to_table(table_data,i)
+        i = i + 2  
+        
+        
+        
+    table_data.append(['CHAUFFEUR','','BIJRIJDER','', 'KENTEKEN','','NOTTITIE',''])
+    table_data.append(['','', '','',''])
+    table_data.append(['PIN','CONTACT', 'ONTERN','TOTALE\nINKOMSTEN','TANK\nKOSTEN','BEGINTIJD','EINDTIJD','TOTAL\nUREN','RESTANT'])
+    table_data.append(['','', '','','','','','',''])  
+    
+    '''
+    for i, user in enumerate(users):
+        # Add a row to the table
+        table_data.append([str(user.winkel)
+                            +'\n'+ str(user.start_time) 
+                            +'\n'+ str(user.sity)
+                            +'\n'+ str(user.postcode)
+                            +'\n'+ str(user.client)
+                            +'\n'+ str(user.start_time)
+                            +'\n'+ str(user.start_time)
+                            +'\n'+ str(user.telefon)])
+    '''
+    SPAN_table = [('SPAN',(0,0),(0,1))]
+    for i in range(len(list_name)):
+        SPAN_table.append(('SPAN',(1,i+4),(4,i+4)))
+        SPAN_table.append(('SPAN',(5,i+4),(8,i+4)))
+    
+   
+    # Create the table
+    height = [doc.height/50.0]*44
+    height.append(30.537795275590554)
+    height.append(16.537795275590554)
+    
+    
+    
+    #style.append(('BACKGROUND',(1,7),(4,7),colors.red))
+    
+    user_table = Table(table_data, colWidths=[doc.width/10.0]*10, rowHeights=height, style=style )
+    
 
     user_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
                                     ('BOX', (0, 0), (-1, -1), 2, colors.black),
@@ -578,6 +686,7 @@ def generate_pdf(request, day = None, month = None, year = None, date = None):
                                     ('BOX',(8,26),(8,27),2,colors.black),
                                     ('BOX',(4,34),(4,35),2,colors.black),
                                     ('BOX',(8,34),(8,35),2,colors.black),
+                                    
                                     
                                     ('BOX',(0,2),(4,9),2,colors.black),
                                     ('BOX',(0,10),(4,17),2,colors.black),
@@ -610,7 +719,60 @@ def generate_pdf(request, day = None, month = None, year = None, date = None):
                                     
                                                 
                                     ]))
-    elements.append(user_table)
+    #elements.append(user_table)
+    #elements.append(user_table)
+    
+    #doc.build(elements)
+    return user_table
+
+
+def generate_pdf(request, day = None, month = None, year = None, date = None , winkel_id = None):
+    if request.user.is_authenticated == False:
+        return redirect("http://localhost:8000/")
+
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    d = datetime.today().strftime('%Y-%m-%d')
+    
+    #response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+    response['Content-Disposition'] = f'inline; filename="{d}.pdf"'
+
+    buffer = BytesIO()
+    
+    
+    
+    if request.GET.getlist("winkel"):
+        users = Apointments.objects.filter( Q(winkel__in = request.GET.getlist("winkel")) ,start_time__day=year, start_time__month=month, start_time__year=day).order_by("start_time")
+    else:
+        users = Apointments.objects.filter(start_time__day=year, start_time__month=month, start_time__year=day).order_by("start_time")
+
+    event_by_page = 10
+    quant_page = int(math.ceil(len(users)/event_by_page))
+    len_users = len(users)
+    doc = SimpleDocTemplate(buffer,
+                                rightMargin=20,
+                                leftMargin=20,
+                                topMargin=10,
+                                bottomMargin=5, pagesize=A4)
+    elements = []
+    p_text = "<u>ANEXA 1</u>"
+    for  page in range(quant_page):
+        
+        
+        page +=1
+        index = (page*10)-10
+        
+        if len_users < 10:
+            #print((page*10)-10,len_users)
+            
+            user_table = get_pdf_page_by_10_events(doc,users[index:index + len_users], buffer,day, month, year)
+        else:
+            user_table = get_pdf_page_by_10_events(doc,users[index:page*10], buffer,day, month, year)
+            
+        len_users -=10
+        elements.append(user_table)
+        elements.append(Paragraph(str(page), ParagraphStyle(name='RightAlign', fontName='Arial', alignment= TA_CENTER)))
+    
     doc.build(elements)
     
     '''
@@ -645,6 +807,7 @@ def generate_pdf(request, day = None, month = None, year = None, date = None):
     
     # Get the value of the BytesIO buffer and write it to the response.
     pdf = buffer.getvalue()
+    
     buffer.close()
     response.write(pdf)
     return response

@@ -18,6 +18,7 @@ class EventForm(ModelForm):
       'start_time': DateInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
       #'end_time': DateInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
     }
+    exclude = ["user"]#,"typeevent","winkel"]
     fields = '__all__'
     
 

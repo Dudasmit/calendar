@@ -5,15 +5,42 @@ Calendar
 {% endblock %}
 
 {% block content %}
+{% block filter %}
+<div class="clearfix">
+
+<aside class="app-sidebar">
+	<form action ="{% url  'core:filterwinkel'  %}" method = "get">  
+	   
+		{% for winkel in winkels %}
+			<div class="clearfix">
+				<a class="treeview-item" href="{% url  'core:filterwinkel' %}?winkel={{ winkel.pk }}">
+					<input   type="checkbox" class = "checked" name = "winkel" value="{{winkel.pk}}">
+					
+				<span  class="form-check-label" >{{ winkel.name }}</span></a>
+
+				
+
+				
+			</div>
+			
+		{%endfor%}
+		<button type="submit" class="btn btn-info left"> Find </button>
+		<button type="submit" class="btn btn-info left"><a class="treeview-item" href="{% url  'core:filtertype' %}">Filter wissen</a> </button>
+	</form>
+  </aside>
+</div>
+{% endblock %}
+
+
 <div class="clearfix">
 	{% if user.is_authenticated %}
 	
   		<form  action="{% url 'logout' %}" method="post">
     	{% csrf_token %}
-    	<button  class="btn btn-info right" type="submit">Log Out</button>
-		<a class="btn btn-info left" href="{% url 'core:calendar' %}?{{ prev_month }}"> Previous Month </a>
-		<a class="btn btn-info right" href="{% url 'core:calendar' %}?{{ next_month }}"> Next Month </a>
-		<a class="btn btn-info right" href="{% url 'core:event_new' %}"> New Event </a>
+    	<button  class="btn btn-info right" type="submit">Afmelden</button>
+		<a class="btn btn-info left" href="{% url 'core:calendar' %}?{{ prev_month }}"> Vorige maand </a>
+		<a class="btn btn-info right" href="{% url 'core:calendar' %}?{{ next_month }}"> Volgende maand </a>
+		<a class="btn btn-info right" href="{% url 'core:event_new' %}"> Nieuw evenement </a>
 	
     	</form>
     {% else %}
