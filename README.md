@@ -1,8 +1,7 @@
 # Game Muster
 
-Тестовое приложение, отображающее список игр из IGDB API, созданное для демонстрации [подготовки django-приложения к деплойменту](https://www.youtube.com/watch?v=03egj6YEUFY)
+Тестовий додаток для обліку доставки товарів, зроблено на основі календаря
 
-Демонтрация процесса деплоймента на виртуальную машину Google Cloud - [link](https://www.youtube.com/watch?v=dKnYNrBoqQc)
 
 ## Quickstart
 
@@ -10,8 +9,8 @@ Run the following commands to bootstrap your environment:
     
     sudo apt get update
     sudo apt-get install -y git python3-dev python3-venv python3-pip supervisor nginx vim libpq-dev
-    git clone https://github.com/python-dev-blog/game_muster
-    cd game_muster
+    git clone https://github.com/Dudasmit/calendar
+    cd eventcalendar
       
     python3 -m venv venv   
     source venv/bin/activate
@@ -24,15 +23,15 @@ Run the following commands to bootstrap your environment:
 
 Run the app locally:
 
-    python3 manage.py runserver 0.0.0.0:8000 --settings=game_muster.settings.dev
+    python3 manage.py runserver 0.0.0.0:8000 --settings=eventcalendar.settings
 
 Run the app with gunicorn:
 
-    gunicorn game_muster.wsgi -b 0.0.0.0:8000
+    gunicorn eventcalendar.wsgi -b 0.0.0.0:8000
     
 Collect static files:
 
-    python3 manage.py collectstatic --settings=game_muster.settings.prod
+    python3 manage.py collectstatic --settings=eventcalendar.settings
     
 
 ### IGDB usage:
@@ -57,7 +56,7 @@ Config file:
             listen [::]:80 default_server;
 
             location /static/ {
-                alias /home/user/game_muster/static/; 
+                alias /home/user/eventcalendar/static/; 
             }
 
             location / {
@@ -78,17 +77,17 @@ Restart NGINX:
 ### Setup Supervisor:
 
     cd /etc/supervisor/conf.d/
-    sudo vim game_muster.conf
+    sudo vim eventcalendar.conf
     
 Config file:
     
-    [program:game_muster]
-    command = /home/user/game_muster/venv/bin/gunicorn game_muster.wsgi  -b 127.0.0.1:8000 -w 4 --timeout 90
+    [program:eventcalendar]
+    command = /home/user/eventcalendar/venv/bin/gunicorn eventcalendar.wsgi  -b 127.0.0.1:8000 -w 4 --timeout 90
     autostart=true
     autorestart=true
-    directory=/home/user/game_muster 
-    stderr_logfile=/var/log/game_muster.err.log
-    stdout_logfile=/var/log/game_muster.out.log
+    directory=/home/user/eventcalendar 
+    stderr_logfile=/var/log/eventcalendar.err.log
+    stdout_logfile=/var/log/eventcalendar.out.log
     
 Update supervisor with the new process:
     
@@ -97,7 +96,7 @@ Update supervisor with the new process:
     
 To restart the process after the code updates run:
 
-    sudo supervisorctl restart game_muster
+    sudo supervisorctl restart eventcalendar
 
     
    
