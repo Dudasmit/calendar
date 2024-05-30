@@ -25,8 +25,8 @@ LOGIN_URL = 'core.views.sign_in'
 env = environ.Env()
 environ.Env.read_env(env_file=os.path.join(BASE_DIR, '.env'))
 
-SECRET_KEY = env('SECRET_KEY')
-#SECRET_KEY = os.environ.get('SECRET_KEY')
+#SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY','django-insecure-_q9&b%395)=(pebed(8ci_vnk6!&s7@ultw3hcgc8^0%b%s1=*')
 #print(SECRET_KEY)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', True)
