@@ -10,7 +10,7 @@ Run the following commands to bootstrap your environment:
     sudo apt get update
     sudo apt-get install -y git python3-dev python3-venv python3-pip supervisor nginx vim libpq-dev
     git clone https://github.com/Dudasmit/calendar
-    cd eventcalendar
+    cd calendar
       
     python3 -m venv venv   
     source venv/bin/activate
@@ -23,15 +23,15 @@ Run the following commands to bootstrap your environment:
 
 Run the app locally:
 
-    python3 manage.py runserver 0.0.0.0:8000 --settings=eventcalendar.settings
+    python3 manage.py runserver 0.0.0.0:8000 --settings=calendar.settings
 
 Run the app with gunicorn:
 
-    gunicorn eventcalendar.wsgi -b 0.0.0.0:8000
+    gunicorn calendar.wsgi -b 0.0.0.0:8000
     
 Collect static files:
 
-    python3 manage.py collectstatic --settings=eventcalendar.settings
+    python3 manage.py collectstatic --settings=calendar.settings
     
 
 ### IGDB usage:
@@ -56,7 +56,7 @@ Config file:
             listen [::]:80 default_server;
 
             location /static/ {
-                alias /home/user/eventcalendar/static/; 
+                alias /home/user/calendar/static/; 
             }
 
             location / {
@@ -77,17 +77,17 @@ Restart NGINX:
 ### Setup Supervisor:
 
     cd /etc/supervisor/conf.d/
-    sudo vim eventcalendar.conf
+    sudo vim calendar.conf
     
 Config file:
     
     [program:eventcalendar]
-    command = /home/user/eventcalendar/venv/bin/gunicorn eventcalendar.wsgi  -b 127.0.0.1:8000 -w 4 --timeout 90
+    command = /home/user/calendar/venv/bin/gunicorn calendar.wsgi  -b 127.0.0.1:8000 -w 4 --timeout 90
     autostart=true
     autorestart=true
-    directory=/home/user/eventcalendar 
-    stderr_logfile=/var/log/eventcalendar.err.log
-    stdout_logfile=/var/log/eventcalendar.out.log
+    directory=/home/user/calendar 
+    stderr_logfile=/var/log/calendar.err.log
+    stdout_logfile=/var/log/calendar.out.log
     
 Update supervisor with the new process:
     
@@ -96,7 +96,7 @@ Update supervisor with the new process:
     
 To restart the process after the code updates run:
 
-    sudo supervisorctl restart eventcalendar
+    sudo supervisorctl restart calendar
 
     
    
