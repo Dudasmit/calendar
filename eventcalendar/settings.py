@@ -36,7 +36,7 @@ ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS.append("eventcalendar.herokuapp.com")
 ALLOWED_HOSTS.append("agenda.sepkoeriers.nl")
 
-CSRF_TRUSTED_ORIGINS = ['http://.*', 'https://eventcalendar.herokuapp.com', 'http://eventcalendar.herokuapp.com']
+CSRF_TRUSTED_ORIGINS = ['http://.*', 'https://agenda.sepkoeriers.nl', 'http://agenda.sepkoeriers.nl', 'http://127.0.0.1:8000']
 
 
 
