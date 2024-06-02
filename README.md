@@ -27,7 +27,7 @@ Run the app locally:
 
 Run the app with gunicorn:
 
-    gunicorn calendar.wsgi -b 0.0.0.0:8000
+    gunicorn eventcalendar.wsgi -b 127.0.0.1:8000
     
 Collect static files:
 
