@@ -36,6 +36,9 @@ ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS.append("eventcalendar.herokuapp.com")
 ALLOWED_HOSTS.append("agenda.sepkoeriers.nl")
 
+CSRF_TRUSTED_ORIGINS = ['http://.*', 'https://eventcalendar.herokuapp.com', 'http://eventcalendar.herokuapp.com']
+
+
 
 
 # Application definition
