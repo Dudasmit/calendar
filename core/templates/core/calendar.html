@@ -9,7 +9,7 @@ Calendar
 <div class="clearfix">
 
 <aside class="app-sidebar">
-	<form action ="{% url  'core:filterwinkel'  %}" method = "get">  
+	<form action ="{% url  'core:filterwinkel'  %}" method = "get"> {% csrf_token %}
 	   
 		{% for winkel in winkels %}
 			<div class="clearfix">
@@ -35,7 +35,7 @@ Calendar
 <div class="clearfix">
 	{% if user.is_authenticated %}
 	
-  		<form  action="{% url 'logout' %}" method="post">
+  		<form  action="{% url 'logout' %}" method="post">{% csrf_token %}
     	{% csrf_token %}
     	<button  class="btn btn-info right" type="submit">Afmelden</button>
 		<a class="btn btn-info left" href="{% url 'core:calendar' %}?{{ prev_month }}"> Vorige maand </a>

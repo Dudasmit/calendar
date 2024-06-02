@@ -4,7 +4,7 @@
 {% block content %}
 <div class="clearfix">
 <aside class="app-sidebar">
-	<form action ="{% url  'core:filterdaywinkel'  %}{{today}}/{{month}}/{{year}}/" method = "get">  
+	<form action ="{% url  'core:filterdaywinkel'  %}{{today}}/{{month}}/{{year}}/" method = "get">{% csrf_token %} 
 	   
 		{% for winkel in winkels %}
 			<div class="clearfix">
