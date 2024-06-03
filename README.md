@@ -30,7 +30,12 @@ Run the app locally:
 Run the app with gunicorn:
 
     gunicorn eventcalendar.wsgi -b 127.0.0.1:8000
+
     gunicorn --bind 127.0.0.1:8000 eventcalendar.wsgi
+    
+    ps ax|grep gunicorn
+
+    pkill -P1 gunicorn
     
 Collect static files:
 
@@ -158,3 +163,25 @@ sudo systemctl enable gunicorn.socket
 И обязательно тестируем, что всё работает!
 
 sudo systemctl status gunicorn.socket
+
+
+
+
+#### Git
+Commit the change using
+git commit -m "My message"
+Stash it.
+Stashing acts as a stack, where you can push changes, and you pop them in reverse order.
+
+To stash, type
+
+git stash
+Do the merge, and then pull the stash:
+
+git stash pop
+Discard the local changes
+using git reset --hard
+or git checkout -t -f remote/branch
+
+Or: Discard local changes for a specific file
+using git checkout filename
