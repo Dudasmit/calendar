@@ -43,7 +43,14 @@ CSRF_TRUSTED_ORIGINS = ['http://.*',
                         'http://127.0.0.1:8000',
                         'http://34.171.209.171',
                         ]
+import socket
+def get_ipaddress(): 
+    
+   host_name = socket.gethostname()
+   ip_address = socket.gethostbyname(host_name) 
+   return "http://"+ip_address
 
+CSRF_TRUSTED_ORIGINS.append(get_ipaddress())
 
 
 # Application definition
