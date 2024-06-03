@@ -36,11 +36,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS.append("eventcalendar.herokuapp.com")
 ALLOWED_HOSTS.append("agenda.sepkoeriers.nl")
-ALLOWED_HOSTS.append("34.171.209.171")
 
 
 CSRF_TRUSTED_ORIGINS = ['http://.*',
-                        'http://34.171.209.171/', 
+                         
                         'https://agenda.sepkoeriers.nl',
                         'http://agenda.sepkoeriers.nl',
                         'https://agenda.sepkoeriers.nl/accounts/profile/',
