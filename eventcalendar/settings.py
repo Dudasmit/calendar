@@ -31,15 +31,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY','django-insecure-_q9&b%395)=(pebed(8ci_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', False)
 #DEBUG = True
-#print(DEBUG)
 
 ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS.append("eventcalendar.herokuapp.com")
 ALLOWED_HOSTS.append("agenda.sepkoeriers.nl")
 
-
-CSRF_TRUSTED_ORIGINS = ['http://.*',
-                         
+CSRF_TRUSTED_ORIGINS = ['http://.*', 
                         'https://agenda.sepkoeriers.nl',
                         'http://agenda.sepkoeriers.nl',
                         'https://agenda.sepkoeriers.nl/accounts/profile/',
