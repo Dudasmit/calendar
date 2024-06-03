@@ -36,6 +36,12 @@ Run the app with gunicorn:
     ps ax|grep gunicorn
 
     pkill -P1 gunicorn
+
+    sudo systemctl restart gunicorn
+    
+    kill pricess
+
+    fuser -k 8000/tcp
     
 Collect static files:
 
