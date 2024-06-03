@@ -36,14 +36,28 @@ ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS.append("eventcalendar.herokuapp.com")
 ALLOWED_HOSTS.append("agenda.sepkoeriers.nl")
 
+
+
 CSRF_TRUSTED_ORIGINS = ['http://.*', 
+                        
                         'https://agenda.sepkoeriers.nl',
                         'http://agenda.sepkoeriers.nl',
                         'https://agenda.sepkoeriers.nl/accounts/profile/',
                         'http://127.0.0.1:8000',
+                        'http://0.0.0.0:8000',
                         'http://34.171.209.171',
+                        'http://34.28.93.1/',
+                        
                         ]
 
+import socket
+def get_ipaddress(): 
+    
+   host_name = socket.gethostname()
+   ip_address = socket.gethostbyname(host_name) 
+   return "http://"+ip_address
+
+CSRF_TRUSTED_ORIGINS.append(get_ipaddress())
 
 
 # Application definition
