@@ -40,7 +40,9 @@ CSRF_TRUSTED_ORIGINS = ['http://.*',
                         'https://agenda.sepkoeriers.nl',
                         'http://agenda.sepkoeriers.nl',
                         'https://agenda.sepkoeriers.nl/accounts/profile/',
-                        'http://127.0.0.1:8000']
+                        'http://127.0.0.1:8000',
+                        'http://34.171.209.171',
+                        ]
 
 
 
