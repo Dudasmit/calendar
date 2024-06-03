@@ -30,6 +30,7 @@ Run the app locally:
 Run the app with gunicorn:
 
     gunicorn eventcalendar.wsgi -b 127.0.0.1:8000
+    gunicorn --bind 127.0.0.1:8000 eventcalendar.wsgi
     
 Collect static files:
 
@@ -58,7 +59,7 @@ Config file:
             listen [::]:80 default_server;
 
             location /static/ {
-                alias /home/user/eventcalendar/static/; 
+                alias /home/dudasmit/eventcalendar/static/; 
             }
 
             location / {
@@ -84,10 +85,10 @@ Restart NGINX:
 Config file:
     
     [program:eventcalendar]
-    command = /home/user/eventcalendar/venv/bin/gunicorn eventcalendar.wsgi  -b 127.0.0.1:8000 -w 4 --timeout 90
+    command = /home/dudasmit/eventcalendar/venv/bin/gunicorn eventcalendar.wsgi  -b 127.0.0.1:8000 -w 4 --timeout 90
     autostart=true
     autorestart=true
-    directory=/home/user/eventcalendar 
+    directory=/home/dudasmit/eventcalendar 
     stderr_logfile=/var/log/eventcalendar.err.log
     stdout_logfile=/var/log/eventcalendar.out.log
     
@@ -103,3 +104,57 @@ To restart the process after the code updates run:
     
    
 
+
+
+Настройка Gunicorn
+
+Откроем для настройки
+
+sudo nano /etc/systemd/system/gunicorn.socket
+
+Пропишем в файле несколько настроек:
+
+[Unit]
+Description=gunicorn socket
+
+[Socket]
+ListenStream=/run/gunicorn.sock
+
+[Install]
+WantedBy=sockets.target
+
+Мы создали раздел [Unit] для описания сокета, в разделе [Socket] мы определили расположение сокета и в разделе [Install] нужен для установки сокета в нужное время.
+
+Откроем служебный файл systemd ля настройки работы сервиса:
+
+sudo nano /etc/systemd/system/gunicorn.service
+
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=dudasmit
+Group=www-data
+WorkingDirectory=/var/www/eventcalendar
+ExecStart=/var/www/eventcalendar/env/bin/gunicorn \
+          --access-logfile - \
+          --workers 5 \
+          --bind unix:/run/gunicorn.sock \
+          eventcalendar.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+Не забудьте указать вашего пользователя, ваше название проекта и ваше виртуальное окружение.
+
+Как мне пояснили workers вычисляется как количество ядер процессора * 2 + 1.
+Теперь мы запускаем и активируем сокет Gunicorn.
+
+sudo systemctl start gunicorn.socket
+sudo systemctl enable gunicorn.socket
+
+И обязательно тестируем, что всё работает!
+
+sudo systemctl status gunicorn.socket
