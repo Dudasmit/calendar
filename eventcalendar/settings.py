@@ -34,7 +34,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', False)
 
 
 ALLOWED_HOSTS = ['*']
-'''
+
 ALLOWED_HOSTS.append("eventcalendar.herokuapp.com")
 ALLOWED_HOSTS.append("agenda.sepkoeriers.nl")
 
@@ -61,7 +61,7 @@ def get_ipaddress():
 #CSRF_TRUSTED_ORIGINS=[get_ipaddress()]
 print(CSRF_TRUSTED_ORIGINS)
 # Application definition
-'''
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
