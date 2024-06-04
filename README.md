@@ -5,7 +5,6 @@
 
 ## Quickstart
 
-
 Run the following commands to bootstrap your environment:
     
     sudo apt-get update
