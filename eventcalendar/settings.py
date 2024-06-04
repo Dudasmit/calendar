@@ -29,8 +29,9 @@ SECRET_KEY = env('SECRET_KEY')
 #SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = os.environ.get('DJANGO_DEBUG')
+#DEBUG = os.environ.get('DJANGO_DEBUG',True)
 DEBUG = env('DJANGO_DEBUG')
+
 #print(SECRET_KEY,DEBUG)
 
 ALLOWED_HOSTS = ['*']
@@ -38,6 +39,9 @@ ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS.append("eventcalendar.herokuapp.com")
 ALLOWED_HOSTS.append("agenda.sepkoeriers.nl")
 
+#SECURE_SSL_REDIRECT=False
+#SESSION_COOKIE_SECURE=False
+#CSRF_COOKIE_SECURE=False
 
 
 CSRF_TRUSTED_ORIGINS = ['http://.*', 
