@@ -57,7 +57,7 @@ def get_ipaddress():
    ip_address = socket.gethostbyname(host_name) 
    return "http://"+ip_address
 CSRF_TRUSTED_ORIGINS=[get_ipaddress()]
-
+print(CSRF_TRUSTED_ORIGINS)
 # Application definition
 
 INSTALLED_APPS = [
