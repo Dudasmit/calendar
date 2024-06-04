@@ -1,4 +1,4 @@
-# Game Muster
+# Eventcalendar
 
 Тестовий додаток для обліку доставки товарів, зроблено на основі календаря
 
@@ -38,7 +38,7 @@ Run the app with gunicorn:
     pkill -P1 gunicorn
 
     sudo systemctl restart gunicorn
-    
+
     kill pricess
 
     fuser -k 8000/tcp
@@ -110,6 +110,7 @@ Update supervisor with the new process:
     
 To restart the process after the code updates run:
 
+    sudo supervisorctl status eventcalendar
     sudo supervisorctl restart eventcalendar
 
     
