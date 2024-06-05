@@ -1,11 +1,11 @@
-{% extends 'core/base.html' %}
 
+{% extends 'core/filter_calendar.html' %}
 {% block title %}
-Calendar
+Kalender
 {% endblock %}
 
 {% block content %}
-{% block filter %}
+<!-- {% block filter %}
 <div class="clearfix">
 
 <aside class="app-sidebar">
@@ -29,7 +29,7 @@ Calendar
 	</form>
   </aside>
 </div>
-{% endblock %}
+{% endblock %} -->
 
 
 <div class="clearfix">
@@ -52,6 +52,10 @@ Calendar
 	
 
 </div>
+{% load l10n %}
 
+{% localize on %}
 {{ calendar }}
+{% endlocalize %}
+
 {% endblock %}

@@ -1,7 +1,8 @@
-{% extends "core/base.html" %}
+{% extends 'core/filter_calendar.html' %}
 
 
 {% block content %}
+<!--{% block filter %}
 <div class="clearfix">
 <aside class="app-sidebar">
 	<form action ="{% url  'core:filterdaywinkel'  %}{{today}}/{{month}}/{{year}}/" method = "get">{% csrf_token %} 
@@ -25,6 +26,8 @@
 	</form>
   </aside>
 </div>
+
+{%endblock%} -->
 <div class="clearfix">
   <a class="btn btn-info left" href="{% url 'core:calendar' %}"> Calendar </a>
 	<a class="btn btn-info left" href="{{ prev_day }}"> Vorige dag </a>

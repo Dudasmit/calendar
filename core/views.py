@@ -118,6 +118,8 @@ class CalendarView(WinkelType,LoginRequiredMixin, generic.ListView):
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
         context['winkels'] =  winkels
+        context['filterwinkelname'] = 'filterwinkel'
+
         
         #context['typeevents'] = WinkelType.get_type_event(self)
         
@@ -225,6 +227,7 @@ def event(request, event_id=None):
     else:
         instance = Apointments()
         instance.user = request.user
+        
         #print(Winkel.objects.filter(winkel__in=request.GET.getlist("winkel")))
         #instance.winkel = get_object_or_404(Winkel, id=request.GET.getlist("winkel")) 
         #instance.typeevent =  get_object_or_404(TypeEvent, id=request.GET.getlist("typeevent")) 
@@ -252,7 +255,10 @@ def event(request, event_id=None):
         person_obj.delete()
         return HttpResponseRedirect(reverse('core:calendar'))
         
-    return render(request, 'core/event.html', {'form': form, 'event_id':event_id, 'get_delete_url':delete_url})
+    winkels = Winkel.objects.all()
+
+    
+    return render(request, 'core/event.html', {'form': form, 'filterwinkelname':'filterwinkel','winkels':winkels, 'event_id':event_id, 'get_delete_url':delete_url})
 
 
 def delete(request, event_id=None):
@@ -326,6 +332,7 @@ class DayView(generic.ListView):
         context['today'] = self.kwargs['day']
         context['month'] = self.kwargs['month']
         context['year'] = self.kwargs['year']
+        context['filterwinkelname'] = 'filterwinkel'
 
         
         
@@ -350,7 +357,7 @@ class FilterDayView(DayView,generic.ListView):
     
 def add_single_event_to_table(table_data,users,i):
     
-    table_data.append(['TIJD',users[i].start_time.strftime("%H:%M"),'','',i+1,'','','',i+2])
+    table_data.append(['TIJD',users[i].levertijd,'','',i+1,'','','',i+2])
     table_data.append(['PLAATS',users[i].sity,'','','','','',''])
     table_data.append(['POSTC. NR.',users[i].postcode,'','','','','',''])
     table_data.append(['NAAM',users[i].client,'','','','','',''])
@@ -361,7 +368,7 @@ def add_single_event_to_table(table_data,users,i):
 
 def add_event_to_table(table_data,users,i):
     
-    table_data.append(['TIJD',users[i].start_time.strftime("%H:%M"),'','',i+1,users[i+1].start_time.strftime("%H:%M"),'','',i+2])
+    table_data.append(['TIJD',users[i].levertijd,'','',i+1,users[i+1].levertijd,'','',i+2])
     table_data.append(['PLAATS',users[i].sity,'','','',users[i+1].sity,'',''])
     table_data.append(['POSTC. NR.',users[i].postcode,'','','',users[i+1].postcode,'',''])
     table_data.append(['NAAM',users[i].client,'','','',users[i+1].client,'',''])
@@ -572,11 +579,12 @@ def get_pdf_page_by_10_events(doc,users,  buffer,day, month, year):
     
 
     #elements.append(Paragraph('My User Names', styles['RightAlign']))
-
+    import locale
     # Need a place to store our table rows
+    locale.setlocale(locale.LC_TIME, "nl_NL") 
     table_data = []
     table_data.append(['','DATUM','','DAG','','LOCATIE','','',''])
-    table_data.append(['',str(year) +' '+ str(datetime(day, month, year).strftime('%B')) +' ' + str(day),'',datetime(day, month, year).strftime('%A'),'','',''])
+    table_data.append(['',str(datetime(day, month, year).strftime("%d %B %Y")),'',datetime(day, month, year).strftime('%A'),'','',''])
     #table_data.append(['',str(year) +' '+ str(users[0].start_time.strftime('%B')) +' ' + str(day),'',users[0].start_time.strftime('%A'),'','',''])
   
         
@@ -604,18 +612,18 @@ def get_pdf_page_by_10_events(doc,users,  buffer,day, month, year):
         
         if left_event - 2 >= 0:
             add_event_to_table(table_data,users,i)
-            if users[i].intern:
-                style.append(('BACKGROUND',(1,color_step),(4,color_step),colors.red))
-            if users[i+1].intern:
-                style.append(('BACKGROUND',(5,color_step),(8,color_step),colors.red))
+            #if users[i].intern:
+            #    style.append(('BACKGROUND',(1,color_step),(4,color_step),colors.red))
+            #if users[i+1].intern:
+            #    style.append(('BACKGROUND',(5,color_step),(8,color_step),colors.red))
             left_event = left_event - 2
             color_step += 8
             
             
         else:
             add_single_event_to_table(table_data,users,i)
-            if users[i].intern:
-                style.append(('BACKGROUND',(1,color_step),(4,color_step),colors.red))
+            #if users[i].intern:
+            #    style.append(('BACKGROUND',(1,color_step),(4,color_step),colors.red))
             left_event = left_event - 1
        
         

@@ -42,10 +42,12 @@ urlpatterns = [
     path('', auth_views.LoginView.as_view(template_name="registration/login.html")),
     
     path('calendar/event/edit/<int:event_id>/', event, name='event_edit'),
+    
     #path('calendar/day/<int:day>/<int:month>/<int:year>/generate_pdf/<int:winkel_id>', generate_pdf, name='generate_pdf'),
     path('calendar/day/<int:day>/<int:month>/<int:year>/generate_pdf', generate_pdf, name='generate_pdf'),
     #path('day/edit/<day><month><year>/', date_edit, name='date_edit'),
     path('calendar/day/edit/<int:day>/<int:month>/<int:year>', DayView.as_view(), name='day'),
+    
     path('calendar/day/edit/<int:day>/<int:month>/<int:year>/', DayView.as_view(), name='filterdaywinkel'),
     path('calendar/day/edit/', FilterDayView.as_view(), name='filterdaywinkel'),
 ]

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, date
 # Create your models here.
 
 class Winkel(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=47)
     
     def __str__(self):
         return self.name
@@ -19,7 +19,7 @@ class Winkel(models.Model):
         #return ('winkels', (), {'winkel_id': self.pk}) 
 
 class TypeEvent(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=47)
     
     def __str__(self):
         return self.name
@@ -43,22 +43,28 @@ class Apointments(models.Model):
     #typeevent = models.ForeignKey(TypeEvent,on_delete=models.CASCADE,verbose_name="typeevent")
 
     winkel = models.ForeignKey(Winkel,on_delete=models.CASCADE,verbose_name="Winkel")
-    start_time = models.DateTimeField(null=True,verbose_name="Datum Tijd")
-    sity = models.CharField(max_length=50,verbose_name="Plaats")
-    postcode = models.CharField(max_length=6) 
+    
+    start_time = models.DateField(null=True,verbose_name="Datum")
+    
+    levertijd = models.CharField( max_length=47,null=True,verbose_name="Levertijd van tot")
+    
+    #end_time = models.DateField(null=True,verbose_name="Datum Tijd")
+    
+    sity = models.CharField(max_length=47,verbose_name="Plaats")
+    postcode = models.CharField(max_length=14) 
     
     #shipping_address = models.CharField(max_length=100,verbose_name="Bezorgadres") 
-    ordernr = models.CharField(max_length=100,verbose_name="OrderNR") 
+    ordernr = models.CharField(max_length=47,verbose_name="Order NR") 
     
     #street = models.CharField(max_length=100,verbose_name="Straat") 
     #bildnumb = models.CharField(max_length=100,verbose_name="Huisnummer") 
 
-    price = models.DecimalField( max_digits=10, decimal_places=2,null=True,verbose_name="Prijs")   
-    intern =   models.BooleanField(default= False)
+    price = models.CharField( max_length=47,null=True,verbose_name="Prijs")   
+    #intern =   models.BooleanField(default= False)
 
     
     client = models.CharField(max_length=100,verbose_name="Naam") 
-    telefon = models.CharField(max_length=50,verbose_name="Telefoon")
+    telefon = models.CharField(max_length=47,verbose_name="Telefoon")
     
     def __str__(self):
         return f'{self.winkel} - {self.sity} - {self.start_time}'
@@ -75,7 +81,7 @@ class Apointments(models.Model):
     def get_html_url(self):
         url = reverse('core:event_edit', args=(self.id,))
         delurl = reverse('core:delete', args=(self.id,))
-        return f'<a href="{url}"> {self.winkel}-{self.start_time.strftime("%H:%M")} </a> <!--<a href="{delurl}"> "delete" </a>-->'
+        return f'<a href="{url}"> {self.winkel}-{self.levertijd} </a> <!--<a href="{delurl}"> "delete" </a>-->'
     @property
     def get_absolute_url(self):
         return reverse('core:event_edit', args=(self.id,))
