@@ -81,7 +81,7 @@ class Apointments(models.Model):
     def get_html_url(self):
         url = reverse('core:event_edit', args=(self.id,))
         delurl = reverse('core:delete', args=(self.id,))
-        return f'<a href="{url}"> {self.winkel}-{self.levertijd} </a> <!--<a href="{delurl}"> "delete" </a>-->'
+        return f'<a href="{url}"> {self.winkel} - {self.levertijd} </a> <!--<a href="{delurl}"> "delete" </a>-->'
     @property
     def get_absolute_url(self):
         return reverse('core:event_edit', args=(self.id,))

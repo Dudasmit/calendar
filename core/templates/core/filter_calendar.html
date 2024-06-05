@@ -20,8 +20,7 @@
 </head>
 
 <body>
-  <div id="mySidenav" class="sidenav">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <div  class="sidenav">
     {% block filter %}
 <div class="clearfix">
 
@@ -29,16 +28,16 @@
 	<form action ="{% url  'core:'  %}{{ filterwinkelname }}" method = "get"> {% csrf_token %}
 	   
 		{% for winkel in winkels %}
-			<div class="clearfix">
+	
 				<a class="treeview-item" href="{% url  'core: ' %}{{ filterwinkelname }}?winkel={{ winkel.pk }}">
 					<input   type="checkbox" class = "checked" name = "winkel" value="{{winkel.pk}}">
 					
 				<span  class="form-check-label" >{{ winkel.name }}</span></a>
-			</div>
+			
 		{%endfor%}
 		<button type="submit" class="btn btn-info left"> Find </button>
     
-    <button type="submit" class="btn btn-info left" href="{% url  'core:filtertype' %}" >Filter wissen </button>
+    <button type="submit" class="btn btn-info left" href="{% url  'core:filtertype' %}" >Filter 111 wissen </button>
 		
 	</form>
   
@@ -49,7 +48,7 @@
 
 </div>
 
-<div id="main">
+<div class="main">
   
   <!-- {% if user.is_authenticated %}
   <form action="{% url 'logout' %}" method="post">
@@ -61,7 +60,6 @@
     {% endif %} -->
   <h1 class="title">{% block title %}{% endblock %}</h1>
   <hr>
-  <span style="font-size:20px;cursor:pointer" onclick="openNav()"> Filter</span>
  
         
   {% block content %}
@@ -71,17 +69,7 @@
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script>
-    function openNav() {
-      document.getElementById("mySidenav").style.width = "250px";
-      document.getElementById("main").style.marginLeft = "250px";
-    }
-    
-    function closeNav() {
-      document.getElementById("mySidenav").style.width = "0";
-      document.getElementById("main").style.marginLeft= "0";
-    }
-    </script>
+ 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
