@@ -579,9 +579,7 @@ def get_pdf_page_by_10_events(doc,users,  buffer,day, month, year):
     
 
     #elements.append(Paragraph('My User Names', styles['RightAlign']))
-    import locale
-    # Need a place to store our table rows
-    locale.setlocale(locale.LC_TIME, "nl_NL") 
+  
     table_data = []
     table_data.append(['','DATUM','','DAG','','LOCATIE','','',''])
     table_data.append(['',str(datetime(day, month, year).strftime("%d %B %Y")),'',datetime(day, month, year).strftime('%A'),'','',''])

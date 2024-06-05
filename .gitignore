@@ -7,4 +7,4 @@ notes
 *.ppk
 pub_putty_key
 /static/
-*/__pycache__/
+/__pycache__/
