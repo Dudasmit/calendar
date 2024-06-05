@@ -23,6 +23,10 @@ Run the following commands to bootstrap your environment:
        export "$file"
        done < .env
 
+Setup locale
+
+sudo dpkg-reconfigure locales
+
 Run the app locally:
 
     python3 manage.py runserver 0.0.0.0:8000 --settings=eventcalendar.settings
