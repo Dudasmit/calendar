@@ -97,7 +97,7 @@ class Apointments(models.Model):
         winkel_filt = ''
         if winkel:
             if len(winkel):
-                winkel_filt += '?'
+                winkel_filt += '/?'
                 for win in winkel:
                     winkel_filt += '&winkel='+win
                      
@@ -111,7 +111,7 @@ class Apointments(models.Model):
         winkel_filt = ''
         if winkel:
             if len(winkel):
-                winkel_filt += '?'
+                winkel_filt += '/?'
                 for win in winkel:
                     winkel_filt += '&winkel='+win
                      

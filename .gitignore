@@ -1,4 +1,4 @@
-
+db.sqlite3
 .idea
 *__pycache__
 .env
@@ -7,4 +7,4 @@ notes
 *.ppk
 pub_putty_key
 /static/
-/__pycache__/
+__pycache__/

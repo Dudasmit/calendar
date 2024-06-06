@@ -21,15 +21,15 @@
 			
 		{%endfor%}
 		<button type="submit" class="btn btn-info left"> Find </button>
-		<button type="submit" class="btn btn-info left"><a class="treeview-item" href="{% url  'core:filterdaywinkel' %}{{today}}/{{month}}/{{year}}/">Filter wissen</a> </button>
-		
+		<button type="submit" class="btn btn-info left" href="{% url  'core:calendar' %}" >Filter wissen </button>		
 	</form>
   </aside>
 </div>
 
 {%endblock%} -->
+
 <div class="clearfix">
-  <a class="btn btn-info left" href="{% url 'core:calendar' %}"> Calendar </a>
+  <a class="btn btn-info left" href="{% url 'core:calendar' %}"> Kalender </a>
 	<a class="btn btn-info left" href="{{ prev_day }}"> Vorige dag </a>
 	<a class="btn btn-info right" href="{{ next_day }}"> Volgende dag </a>
 	<a class="btn btn-info right" href="{% url 'core:event_new' %}"> Nieuw evenement </a>
