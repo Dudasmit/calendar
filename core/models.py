@@ -46,7 +46,7 @@ class Apointments(models.Model):
     
     start_time = models.DateField(null=True,verbose_name="Datum")
     
-    Levertijd = models.CharField( max_length=47,null=True,verbose_name="Levertijd van tot")
+    levertijd = models.CharField( max_length=47,null=True,verbose_name="Levertijd van tot")
     
     #end_time = models.DateField(null=True,verbose_name="Datum Tijd")
     
