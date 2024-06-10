@@ -203,5 +203,40 @@ Or: Discard local changes for a specific file
 using git checkout filename
 
 Copy file 
+ls -l
 pscp -P 22 root@84.247.9.116:/root/eventcalendar/db.sqlite3 "C:\Temp"
 cp db.sqlite3 /home/dudasmit/eventcalendar/
+
+
+
+
+#### NGINX SSL
+
+server {
+    listen 80;
+    server_name agenda.sepkoeriers.nl;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name agenda.sepkoeriers.nl;
+
+    ssl_certificate /etc/letsencrypt/live/agenda.sepkoeriers.nl/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/agenda.sepkoeriers.nl/privkey.pem;
+
+    location /static/ {
+        alias /var/www/eventcalendar/static/;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+        add_header P3P 'CP="ALL DSP COR PSAa OUR NOR ONL UNI COM NAV"';
+        add_header Access-Control-Allow-Origin *;
+    }
+}
