@@ -133,13 +133,13 @@ def prev_day(d):
     first = d
     prev_day = first - timedelta(days=1)
 
-    day_ = '/calendar/day/edit/' + str(prev_day.day) + '/' +  str(prev_day.month) + '/' + str(prev_day.year)
+    day_ = '/sepautoservice/day/edit/' + str(prev_day.day) + '/' +  str(prev_day.month) + '/' + str(prev_day.year)
     return day_
 
 def next_day(d):
     last = d
     next_day = last + timedelta(days=1)
-    day_ = '/calendar/day/edit/' + str(next_day.day) + '/' +  str(next_day.month) + '/' + str(next_day.year)
+    day_ = '/sepautoservice/day/edit/' + str(next_day.day) + '/' +  str(next_day.month) + '/' + str(next_day.year)
     return day_
 
 
