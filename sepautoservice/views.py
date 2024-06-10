@@ -14,7 +14,6 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
-from sepautoservice.views import *
 from .utils import Calendar,Day
 from .forms import EventForm, DayForm
 from django.db.models import Q
@@ -41,22 +40,11 @@ pdfmetrics.registerFont(TTFont('Arial-Bold', settings.STATIC_ROOT + '/fonts/aria
 def index(request):
     return HttpResponse('hello')
 
-
-class WinkelType:
-    
-    def get_winkel(self):
-        return  Winkel.objects.all()
-    
-    def get_type_event(self):
-        return  TypeEvent.objects.all()
-
 def get_date(req_day):
     if req_day:
         year, month = (int(x) for x in req_day.split("-"))
         return date(year, month, day=1)
     return datetime.today()
-
-
 
 def user_login(request):
     if request.method == 'POST':
@@ -82,10 +70,10 @@ def logout_view(request):
     
 
 
-class CalendarView(WinkelType,LoginRequiredMixin, generic.ListView):
+class Service_CalendarView(LoginRequiredMixin, generic.ListView):
     
-    model = Apointments
-    template_name = 'core/calendar.html'
+    model = Service_Apointments
+    template_name = 'sepautoservice/calendar.html'
     
     
     def dispatch(self, request, *args, **kwargs):
@@ -109,16 +97,14 @@ class CalendarView(WinkelType,LoginRequiredMixin, generic.ListView):
 
         # Instantiate our calendar class with today's year and date
         #print(self.request.GET.getlist("typeevent"))
-        cal = Calendar(d.year, d.month,self.request.GET.getlist("typeevent") ,self.request.GET.getlist("winkel") )
+        cal = Calendar(d.year, d.month)
 
         # Call the formatmonth method, which returns our calendar as a table
-        winkels = WinkelType.get_winkel(self)
         
         html_cal = cal.formatmonth(withyear=True)
         context['calendar'] = mark_safe(html_cal)
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
-        context['winkels'] =  winkels
         context['filterwinkelname'] = 'filterwinkel'
 
         
@@ -126,20 +112,6 @@ class CalendarView(WinkelType,LoginRequiredMixin, generic.ListView):
         
         return context
 
-class FilterWinkel(CalendarView,generic.ListView):
-    #login_url = "accounts:signin"
-    template_name = "core/calendar.html"
-    
-
-    def get_queryset(self):
-       
-        
-        queryset = Apointments.objects.filter(
-             Q(winkel__in=self.request.GET.getlist("winkel"))
-            )   
-                            
-        return queryset
-    
 
     
 def filterwinkel(request, winkel=None):
@@ -154,36 +126,6 @@ def filterwinkel(request, winkel=None):
     return render(request, CalendarView())
     
     
-class СhooseTypeEvent(generic.ListView):
-    login_url = "accounts:signin"
-    template_name = "core/typeevent.html"
-    model = TypeEvent
-    #typeevents = TypeEvent.objects.all()
-    
-    
-
-    
-    def get_context_data(self, **kwargs):
-        
-       
-       
-        context = super().get_context_data(**kwargs)
-        # use today's date for the calendar
-        
-
-        # Call the formatmonth method, which returns our calendar as a table
-       
-        context['typeevents'] = WinkelType.get_type_event(self)
-        
-        
-        return context
-
-
-def get_date(req_day):
-    if req_day:
-        year, month = (int(x) for x in req_day.split('-'))
-        return date(year, month, day=1)
-    return datetime.today()
 
 
 
@@ -214,41 +156,21 @@ def next_month(d):
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
 
-class Sepautoservice(Service_CalendarView, generic.ListView):
-    
-    login_url = "accounts:signin"
-    
-    def get_context_data(self, **kwargs):
-        
-       
-       
-        context = super().get_context_data(**kwargs)
-        # use today's date for the calendar
-        
-
-        # Call the formatmonth method, which returns our calendar as a table
-       
-        context['typeevents'] = WinkelType.get_type_event(self)
-        
-        
-        return context
 
 
-
-    
 
 def event(request, event_id=None):
     if request.user.is_authenticated == False:
         return redirect("http://localhost:8000/")
     
-    instance = Apointments()
+    instance = Service_Apointments()
     delete_url = ''
     if event_id:
-        instance = get_object_or_404(Apointments, pk=event_id)
+        instance = get_object_or_404(Service_Apointments, pk=event_id)
         
-        delete_url = Apointments.get_delete_url(instance)
+        delete_url = Service_Apointments.get_delete_url(instance)
     else:
-        instance = Apointments()
+        instance = Service_Apointments()
         instance.user = request.user
         
         #print(Winkel.objects.filter(winkel__in=request.GET.getlist("winkel")))
@@ -269,19 +191,18 @@ def event(request, event_id=None):
         if form.is_valid():
             #form.user= request.user
             form.save()
-            return HttpResponseRedirect(reverse('core:calendar'))
+            return HttpResponseRedirect(reverse('sepautoservice:calendar'))
     
     if request.method == 'delete':
         
         person_obj = Apointments.objects.get(pk=event_id)
         #print(person_obj)
         person_obj.delete()
-        return HttpResponseRedirect(reverse('core:calendar'))
+        return HttpResponseRedirect(reverse('sepautoservice:calendar'))
         
-    winkels = Winkel.objects.all()
 
     
-    return render(request, 'core/event.html', {'form': form, 'filterwinkelname':'filterwinkel','winkels':winkels, 'event_id':event_id, 'get_delete_url':delete_url})
+    return render(request, 'sepautoservice/event.html', {'form': form, 'get_delete_url':delete_url})
 
 
 def delete(request, event_id=None):
@@ -290,7 +211,7 @@ def delete(request, event_id=None):
     Event_ = Apointments.objects.get(pk=event_id)
     
     Event_.delete()
-    return HttpResponseRedirect(reverse('core:calendar'))
+    return HttpResponseRedirect(reverse('sepautoservice:calendar'))
 
 def date_edit(request, day = None, month = None, year = None):
    
@@ -298,7 +219,7 @@ def date_edit(request, day = None, month = None, year = None):
     date_ = day+month+year
     #print(date_[3:7])
     if day:
-        instance = get_list_or_404(Apointments, start_time__day=date_[0:2], start_time__month=date_[2:3], start_time__year=date_[3:7]) 
+        instance = get_list_or_404(Service_Apointments, start_time__day=date_[0:2], start_time__month=date_[2:3], start_time__year=date_[3:7]) 
         #instance = get_list_or_404(Apointments, start_time__day=day, start_time__month=month, start_time__year=year) 
     else:
         instance = Apointments()
@@ -307,19 +228,19 @@ def date_edit(request, day = None, month = None, year = None):
     #print(instance)
     #form = DayForm(instance=instance)
     model = Apointments
-    template_name = 'core/day.html'
+    template_name = 'sepautoservice/day.html'
 
     
     
 
-    return render(request, 'core/day.html', {'instance': instance, 'date_':date_})
+    return render(request, 'sepautoservice/day.html', {'instance': instance, 'date_':date_})
 
 
 
 class DayView(generic.ListView):
     
-    model = Apointments
-    template_name = 'core/day.html'
+    model = Service_Apointments
+    template_name = 'sepautoservice/day.html'
    
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated == True:
@@ -342,7 +263,7 @@ class DayView(generic.ListView):
         d = datetime(self.kwargs['year'], self.kwargs['month'], self.kwargs['day'])
 
         # Instantiate our calendar class with today's year and date
-        cal = Day(self.kwargs['day'],self.kwargs['year'], self.kwargs['month'],self.request.GET.getlist("typeevent") ,self.request.GET.getlist("winkel") , date =d)
+        cal = Day(self.kwargs['day'],self.kwargs['year'], self.kwargs['month'], date =d)
         
 
         # Call the formatmonth method, which returns our calendar as a table
@@ -351,7 +272,6 @@ class DayView(generic.ListView):
         context['day'] = mark_safe(html_cal)
         context['prev_day'] = prev_day(d)
         context['next_day'] = next_day(d)
-        context['winkels'] =  WinkelType.get_winkel(self)
         context['today'] = self.kwargs['day']
         context['month'] = self.kwargs['month']
         context['year'] = self.kwargs['year']
@@ -359,14 +279,14 @@ class DayView(generic.ListView):
 
         
         
-        context['print'] = Apointments.get_print_pdf_url(Apointments, self.kwargs['year'], self.kwargs['month'], self.kwargs['day'], self.request.GET.getlist("winkel") )
+        context['print'] = Service_Apointments.get_print_pdf_url(Service_Apointments, self.kwargs['year'], self.kwargs['month'], self.kwargs['day'] )
         
         
         return context
 
 class FilterDayView(DayView,generic.ListView):
     #login_url = "accounts:signin"
-    #template_name = "core/day.html"
+
     #print("FilterDayView")
     
 
@@ -756,7 +676,7 @@ def get_pdf_page_by_10_events(doc,users,  buffer,day, month, year):
     return user_table
 
 
-def generate_pdf(request, day = None, month = None, year = None, date = None , winkel_id = None):
+def generate_pdf(request, day = None, month = None, year = None, date = None):
     if request.user.is_authenticated == False:
         return redirect("http://localhost:8000/")
 
@@ -771,10 +691,7 @@ def generate_pdf(request, day = None, month = None, year = None, date = None , w
     
     
     
-    if request.GET.getlist("winkel"):
-        users = Apointments.objects.filter( Q(winkel__in = request.GET.getlist("winkel")) ,start_time__day=year, start_time__month=month, start_time__year=day).order_by("start_time")
-    else:
-        users = Apointments.objects.filter(start_time__day=year, start_time__month=month, start_time__year=day).order_by("start_time")
+    users = Service_Apointments.objects.filter(start_time__day=year, start_time__month=month, start_time__year=day).order_by("start_time")
 
     event_by_page = 10
     quant_page = int(math.ceil(len(users)/event_by_page))

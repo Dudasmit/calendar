@@ -20,7 +20,11 @@ from django.urls import path, include
 urlpatterns = [
     #path('', include('core.urls')),
     path('admin/', admin.site.urls),
+    
     path('', include('core.urls', namespace='core')),
+    path('', include('sepautoservice.urls', namespace='sepautoservice')),
+    
     path("accounts/", include("django.contrib.auth.urls")),
 
 ]
+ 

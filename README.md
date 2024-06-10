@@ -191,8 +191,17 @@ Do the merge, and then pull the stash:
 
 git stash pop
 Discard the local changes
-using git reset --hard
-or git checkout -t -f remote/branch
+using 
+    git reset --hard
+or 
+    git checkout -t -f remote/branch
+
+    git rm --cached db.sqlite3
+    git commit
 
 Or: Discard local changes for a specific file
 using git checkout filename
+
+Copy file 
+pscp -P 22 root@84.247.9.116:/root/eventcalendar/db.sqlite3 "C:\Temp"
+cp db.sqlite3 /home/dudasmit/eventcalendar/
