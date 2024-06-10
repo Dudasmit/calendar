@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
+from datetime import datetime, timedelta, date
 # Create your models here.
 
 class Winkel(models.Model):

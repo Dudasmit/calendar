@@ -14,7 +14,6 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
-from sepautoservice.views import *
 from .utils import Calendar,Day
 from .forms import EventForm, DayForm
 from django.db.models import Q
@@ -214,28 +213,6 @@ def next_month(d):
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
 
-class Sepautoservice(Service_CalendarView, generic.ListView):
-    
-    login_url = "accounts:signin"
-    
-    def get_context_data(self, **kwargs):
-        
-       
-       
-        context = super().get_context_data(**kwargs)
-        # use today's date for the calendar
-        
-
-        # Call the formatmonth method, which returns our calendar as a table
-       
-        context['typeevents'] = WinkelType.get_type_event(self)
-        
-        
-        return context
-
-
-
-    
 
 def event(request, event_id=None):
     if request.user.is_authenticated == False:
@@ -730,7 +707,11 @@ def get_pdf_page_by_10_events(doc,users,  buffer,day, month, year):
                                     ('INNERGRID', (0, 42), (-1, -1), 2, colors.black),
                                     ('INNERGRID', (0, 0), (8, 1), 2, colors.black),
                                     ('FONTSIZE', (0, 0), (-1, -1), 8),
+                                    
                                     ('FONTSIZE', (1,2),(8,41), 11),
+                                    
+
+                                    
                                     ('FONTSIZE', (4,2),(4,3), 12),
                                     ('FONTSIZE', (8,2),(8,3), 12),
                                     ('FONTSIZE', (4,10),(4,11), 12),
