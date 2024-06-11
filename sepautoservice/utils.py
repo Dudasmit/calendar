@@ -101,14 +101,15 @@ class Day(HTMLCalendar):
         
 			
 			line_table += f'''<tr style="border: 2px solid;"><tr><td width="150"> TIJD </td> <td width="400"> {events_per_day[i].tijd} </td><td style="text-align: center; vertical-align: middle;" rowspan="2"  width="300"><a href="{events_per_day[i].get_absolute_url}"> <div>{i+1}</div></a></td></tr>
-							  <tr><td width="150"> Kenteken </td> <td width="400"> {events_per_day[i].kenteken} </td></tr>
+							  <tr><td width="150"> Naam </td> <td width="400"> {events_per_day[i].naam} </td></tr>
+							  <tr><td width="150"> Kenteken </td> <td colspan="2" width="400"> {events_per_day[i].kenteken} </td></tr>
 							  <tr><td width="150"> functie </td> <td colspan="2" width="400"> {events_per_day[i].functie} </td></tr>
 							  <tr><td width="150"> price </td> <td colspan="2" width="400"> {events_per_day[i].price} </td></tr>
 							  <tr><td width="150"> Omschrijving </td> <td colspan="2" width="400">  {events_per_day[i].Omschrijving}</td></tr>
          
    							</tr>'''
 			left_event = left_event - 1
-			i = i + 2
+			i = i + 1
        
         
       
