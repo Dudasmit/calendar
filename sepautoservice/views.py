@@ -208,7 +208,7 @@ def event(request, event_id=None):
 def delete(request, event_id=None):
     if request.user.is_authenticated == False:
         return redirect("http://localhost:8000/")
-    Event_ = Apointments.objects.get(pk=event_id)
+    Event_ = Service_Apointments.objects.get(pk=event_id)
     
     Event_.delete()
     return HttpResponseRedirect(reverse('sepautoservice:calendar'))

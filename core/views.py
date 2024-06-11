@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, date
 from django.shortcuts import redirect
 import calendar
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from sepautoservice.views import *
@@ -274,6 +274,7 @@ def event(request, event_id=None):
     if request.method == 'delete':
         
         person_obj = Apointments.objects.get(pk=event_id)
+        
         #print(person_obj)
         person_obj.delete()
         return HttpResponseRedirect(reverse('core:calendar'))
@@ -287,8 +288,11 @@ def event(request, event_id=None):
 def delete(request, event_id=None):
     if request.user.is_authenticated == False:
         return redirect("http://localhost:8000/")
-    Event_ = Apointments.objects.get(pk=event_id)
     
+    Event_ = get_object_or_404(Apointments, pk=event_id)
+
+    #Event_ = Apointments.objects.get(pk=event_id)
+    #print(request.method)
     Event_.delete()
     return HttpResponseRedirect(reverse('core:calendar'))
 
