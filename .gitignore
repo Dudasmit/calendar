@@ -8,3 +8,4 @@ notes
 pub_putty_key
 /static/
 __pycache__/
+migrations
