@@ -1,5 +1,6 @@
 from django.urls import path, include
 from django.contrib import admin
+
 from django.contrib.auth import views as auth_views
 
 from .views import (
@@ -51,6 +52,8 @@ urlpatterns = [
     path('calendar/day/edit/', FilterDayView.as_view(), name='filterdaywinkel'),
     
     path('sepautoservice/', Sepautoservice.as_view() , name='sepautoservice'),
+    
+   
 ]
 
 
