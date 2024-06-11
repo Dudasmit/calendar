@@ -33,7 +33,7 @@ Event
     <table  style="border: 2px solid; font-size: 1.5vw;" border="2" cellpadding="1"  align="center" cellspacing="2" class="";>
     {{ form.as_table }}
     <tr><td colspan="2"><button type="submit" class="btn btn-info right"> Stuur </button></td></tr>
-    <tr><td colspan="2"><a class="btn btn-info right" href="{{get_delete_url}}"> Verwijder </a></td></tr>
+    <tr><td colspan="2"><a id="delete-event-button" class="btn btn-info right" > Verwijder </a></td></tr>
   </table>
   </table>
 </form>
@@ -49,4 +49,34 @@ Event
 
 </form>
 </form>-->
+
+
+
+{% endblock %}
+{% block script %}
+<script>
+document.getElementById('delete-event-button').addEventListener('click', function() {
+  const eventId = this.getAttribute('data-event-id');
+  if (confirm('Weet je zeker dat je deze gebeurtenis wilt verwijderen?')) {
+      $.ajax({
+          url: `event/delete/${eventId}/`,
+          type: 'POST',
+          data: {
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+          },
+          success: function(response) {
+              alert(response.message);
+              window.location.reload();
+          },
+          error: function(xhr, status, error) {
+              alert('Error!');
+          }
+      
+      });
+  }});
+</script>
+
+  
+
+
 {% endblock %}
