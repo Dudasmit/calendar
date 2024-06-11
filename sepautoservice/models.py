@@ -16,6 +16,8 @@ class Service_Apointments(models.Model):
     
     datum = models.DateField(null=True,verbose_name="Datum")
     
+    naam = models.CharField(max_length=100,null=True,verbose_name="Naam") 
+    
     tijd = models.CharField( max_length=47,null=True,verbose_name="Tijd")
     
     
