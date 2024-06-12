@@ -17,7 +17,7 @@ Sepautoservice
 		<a class="btn btn-info left" href="{% url 'sepautoservice:calendar' %}?{{ prev_month }}"> Vorige maand </a>
 		<a class="btn btn-info right" href="{% url 'sepautoservice:calendar' %}?{{ next_month }}"> Volgende maand </a>
 		<a class="btn btn-info right" href="{% url 'sepautoservice:event_new' %}"> Nieuw evenement </a>
-		<button type="submit" class="btn btn-info left"><a class="treeview-item" href="{% url  'sepautoservice:levering' %}">Levering</a> </button>
+		<a class="btn btn-info left" href="{% url  'sepautoservice:levering' %}">Levering</a> 
     	</form>
     {% else %}
     	<p>Please login to see this page.</p>
@@ -28,6 +28,7 @@ Sepautoservice
 	
 
 </div>
+
 {% load l10n %}
 
 {% localize on %}
