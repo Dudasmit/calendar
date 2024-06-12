@@ -12,13 +12,13 @@ Kalender
 	{% if user.is_authenticated %}
 	
   		<form  action="{% url 'logout' %}" method="post">{% csrf_token %}
-    	{% csrf_token %}
-    	<button  class="btn btn-info right" type="submit">Afmelden</button>
+    		<button  class="btn btn-info right" type="submit">Afmelden</button>
+		</form>
 		<a class="btn btn-info left" href="{% url 'core:calendar' %}?{{ prev_month }}"> Vorige maand </a>
 		<a class="btn btn-info right" href="{% url 'core:calendar' %}?{{ next_month }}"> Volgende maand </a>
 		<a class="btn btn-info right" href="{% url 'core:event_new' %}"> Nieuw evenement </a>
 		<a class="btn btn-info left" href="{% url  'core:sepautoservice' %}">Sepautoservice</a>
-    	</form>
+    	
     {% else %}
     	<p>Please login to see this page.</p>
     {% endif %}
