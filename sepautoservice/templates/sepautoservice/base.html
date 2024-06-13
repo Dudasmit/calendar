@@ -16,8 +16,22 @@
   <link rel="stylesheet" type="text/css" href="{% static 'sepautoservice/css/styles.css' %}">
   <title>Sep Calendar</title>
 </head>
-<body>
 
+ 
+  <!--header class="app-header">
+  <li class="dropdown">
+    <a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Open Profile Menu"><i class="fa fa-user fa-lg"></i></a>
+    <ul class="dropdown-menu settings-menu dropdown-menu-right">
+       
+        <li>
+          <form class="dropdown-item"   action="{% url 'logout' %}" method="post">{% csrf_token %}
+            <button  class="btn btn-info right" type="submit">Afmelden</button>
+          </form>
+        </li>
+    </ul>
+</li>
+</header-->
+<body>
   <!-- {% if user.is_authenticated %}
   <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
