@@ -69,9 +69,14 @@ body {
   padding: 20px 0px 0px 5px;
 }
 
-.month {
+.month  {
   font-size: 25px;
+  
 }
+
+
+
+
 
 .date {
   font-size: 16px;
@@ -167,6 +172,7 @@ a {
   
 #main {
     padding: 16px;
+    flex: 1 200px;
     
   }
   
@@ -184,20 +190,32 @@ a {
     padding: 10px;
     text-align: center;
     font-size: 15px;
-}
+  }
 
-.calendar td {
+  .calendar td {
   width: 200px;
   height: 10px;
   padding: 20px 0px 0px 5px;
-}
-.h1, h1 {
-  font-size: 18px;
-}
   }
+  .h1, h1 {
+  font-size: 18px;
+  }
+    }
 
 
-.container-buttons {
+  .container-buttons {
     display: flex;
     justify-content: space-around;
+  }
+ 
+section {
+    display: flex;
+  }
+
+article {
+    flex: 1 200px;
+  }
+
+article:nth-of-type(3) {
+    flex: 2 200px;
   }
