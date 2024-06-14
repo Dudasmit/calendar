@@ -21,6 +21,8 @@ body {
 
 .clearfix {
   margin: 8px;
+  
+  
 }
 
 .form {
@@ -40,6 +42,7 @@ body {
 .title {
   text-align: center;
   margin: 10px;
+  width: 100%;
 }
 
 .calendar {
@@ -162,20 +165,23 @@ a {
     margin-left: 50px;
   }
   
-  #main {
-    transition: margin-left .5s;
+#main {
     padding: 16px;
+    
   }
   
-  @media screen and (max-height: 932px) {
+@media screen and (max-height: 932px) {
     .sidenav {padding-top: 15px;}
     .sidenav a {font-size: 18px;}
     .clearfix a {
-    font-size: 10px;
+    font-size: 14px;
+    padding: .175rem .25rem;
   }
   .clearfix .btn {
-    font-size: 10px;
+    font-size: 14px;
+    padding: .175rem .25rem;
   }
+  
   .calendar th {
     padding: 10px;
     text-align: center;
