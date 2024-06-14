@@ -175,11 +175,11 @@ a {
     .sidenav a {font-size: 18px;}
     .clearfix a {
     font-size: 14px;
-    padding: .175rem .25rem;
+    padding: .175rem .55rem;
   }
   .clearfix .btn {
     font-size: 14px;
-    padding: .175rem .25rem;
+    padding: .175rem .55rem;
   }
   
   .calendar th {
