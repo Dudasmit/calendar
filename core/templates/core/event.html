@@ -33,7 +33,7 @@ Event
     <table  style="border: 2px solid; font-size: 1.5vw;" border="2" cellpadding="1"  align="center" cellspacing="2" class="";>
     {{ form.as_table }}
     <tr><td colspan="2"><button type="submit" class="btn btn-info right"> Stuur </button></td></tr>
-    <tr><td colspan="2"><a class="btn btn-info right" href="{{get_delete_url}}"> Verwijder </a></td></tr>
+    <tr><td colspan="2"><button id="delete-event-button" data-event-id="" type="button" class="btn btn-danger right">Verwijder</button></td></tr>
   </table>
   </table>
 </form>
@@ -45,10 +45,44 @@ Event
   
   <button type="delete" class="btn btn-info right" href="{{get_delete_url}}"> Delete </button>
   <td colspan="2"><a href="event/delete/{{event_id}}/"> Delete </button></td></tr>
-    <a href="{{get_delete_url}}"> Delete </a>
+    <a href="{{get_delete_url}}"> Delete </a> href="{{get_delete_url}}"
 
 </form>
 </form>-->
 
 
 {% endblock %}
+
+{% block script %}
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+  var deleteButton = document.getElementById("delete-event-button");
+  deleteButton.setAttribute("data-event-id", {{event_id}});
+  
+  
+  document.getElementById('delete-event-button').addEventListener('click', function() {
+      const eventId = this.getAttribute('data-event-id');
+      if (confirm('Weet je zeker dat je deze gebeurtenis wilt verwijderen?')) {
+          $.ajax({
+            url: `{{get_delete_url}}`,
+            type: 'POST',
+              data: {
+                  csrfmiddlewaretoken: '{{ csrf_token }}',
+              },
+              success: function(response) {
+                //alert(response.message);
+
+                  window.location.href = response.redirect;
+              },
+              error: function(xhr, status, error) {
+                  alert('Error!');
+              }
+          
+          });
+      }}, {passive: true});
+  </script>
+  
+  
+{% endblock %}
+

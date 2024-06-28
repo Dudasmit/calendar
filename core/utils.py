@@ -33,7 +33,13 @@ class Calendar(HTMLCalendar):
 
 		if day != 0:
 			
-			return f"<td><span class='date'>{Event.get_html_url_day(Event,day, self.month,self.year,self.winkel)}</span><ul><ol>{d}</ol></ul></td>"
+			return f"""<td>
+
+						<span class='date' id='date'>{Event.get_html_url_day(Event,day, self.month,self.year,self.winkel)}</span>
+						<ul><ol>{d}</ol></ul>
+						
+   
+     				</td>"""
 		return '<td></td>'
 
 	# formats a week as a tr 
@@ -53,7 +59,7 @@ class Calendar(HTMLCalendar):
 		else:
 			events = Event.objects.filter(start_time__year=self.year, start_time__month=self.month)
    
-		cal = f'<table border="0" cellpadding="0" cellspacing="0" class="calendar">\n'
+		cal = f'<table border="0" cellpadding="0" cellspacing="0" class="calendar" id="calendar">\n'
 		cal += f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
 		cal += f'{self.formatweekheader()}\n'
 		for week in self.monthdays2calendar(self.year, self.month):

@@ -215,19 +215,19 @@ def delete(request, event_id=None):
 
 def date_edit(request, day = None, month = None, year = None):
    
-    instance = Apointments()
+    instance = Service_Apointments()
     date_ = day+month+year
     #print(date_[3:7])
     if day:
         instance = get_list_or_404(Service_Apointments, start_time__day=date_[0:2], start_time__month=date_[2:3], start_time__year=date_[3:7]) 
         #instance = get_list_or_404(Apointments, start_time__day=day, start_time__month=month, start_time__year=year) 
     else:
-        instance = Apointments()
+        instance = Service_Apointments()
         
     
     #print(instance)
     #form = DayForm(instance=instance)
-    model = Apointments
+    model = Service_Apointments
     template_name = 'sepautoservice/day.html'
 
     

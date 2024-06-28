@@ -117,7 +117,7 @@ class Apointments(models.Model):
                 
             url += winkel_filt
 
-        return f'<a href="{url}"> {day}</a>'
+        return f'<a href="{url}">{day}</a>'
     
     def get_url_day(self, day, month, year):
         #print(Winkel.get_absolute_url(self))

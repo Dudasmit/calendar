@@ -294,7 +294,8 @@ def delete(request, event_id=None):
     #Event_ = Apointments.objects.get(pk=event_id)
     #print(request.method)
     Event_.delete()
-    return HttpResponseRedirect(reverse('core:calendar'))
+    #return HttpResponseRedirect(reverse('core:calendar'))
+    return JsonResponse({'message':'event was delered','redirect':reverse('core:calendar')}, status=200)
 
 def date_edit(request, day = None, month = None, year = None):
    
